@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buat Panel - Asta Panel 🦅</title>
+  <meta name="theme-color" content="#0ea5e9"/>
+  <link rel="icon" href="https://files.catbox.moe/bzkzuc.jpg" />
+  <link rel="stylesheet" href="styles/panel.css">
+  <script>
+    (function(){
+      try {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <nav id="sidebar" class="sidebar">
+    <button id="sidebar-close-btn" class="close-btn">&times;</button>
+    <a href="/admin" id="admin-link"><span class="icon">⚙️</span> Admin</a>
+    <a href="#" id="sidebar-logout-btn"><span class="icon">🚪</span> Keluar</a>
+  </nav>
+
+  <div id="notification-container"></div>
+  <div class="overlay"></div>
+  <header>
+    <button id="menu-btn" class="header-btn" style="left: 20px;">&#9776;</button>
+    <img class="logo" src="https://files.catbox.moe/bzkzuc.jpg" alt="Logo"/>
+    <div style="font-size: 22px; font-weight: 700; letter-spacing: 0.3px;">
+      Asta Panel 🦅
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" title="Ganti tema">
+      <span id="theme-icon" aria-hidden="true">🌙</span>
+      <span id="theme-label">Mode Gelap</span>
+    </button>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Buat Panel</h2>
+      <p class="subtitle">Lengkapi detail di bawah ini</p>
+      <form id="panel-form" novalidate>
+        <div class="form-group">
+          <label for="nama">Nama</label>
+          <input type="text" id="nama" placeholder="Masukkan nama user panel" required />
+        </div>
+        <div class="form-group">
+          <label for="ram">RAM Panel</label>
+          <select id="ram" required>
+            <option value="" disabled selected>Pilih RAM</option>
+            <option value="1gb">1 GB</option>
+            <option value="2gb">2 GB</option>
+            <option value="3gb">3 GB</option>
+            <option value="4gb">4 GB</option>
+            <option value="5gb">5 GB</option>
+            <option value="6gb">6 GB</option>
+            <option value="7gb">7 GB</option>
+            <option value="8gb">8 GB</option>
+            <option value="9gb">9 GB</option>
+            <option value="10gb">10 GB</option>
+            <option value="unli">Unlimited</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="telegram-id">ID Telegram</label>
+          <input type="text" id="telegram-id" placeholder="Contoh: 12345678" required />
+          <div class="helper">Detail akun akan dikirim ke sini. Sandi dibuat otomatis.</div>
+        </div>
+        <div class="form-group admin-checkbox" id="admin-checkbox-group" style="display: none;">
+          <input type="checkbox" id="make-admin" />
+          <label for="make-admin">Jadikan Administrator Panel</label>
+        </div>
+        <div class="form-group">
+          <button id="create-panel-btn" type="submit">Buat Panel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <footer>
+    © <span id="y"></span> Asta Panel 🦅 · Dibuat dengan ❤
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('notification-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => toast.remove());
+      }, 5000);
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    function applyThemeUI(theme) {
+      const isDark = theme === 'dark';
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#0b1220' : '#e6f0ff');
+      themeToggleBtn.querySelector('#theme-icon').textContent = isDark ? '☀️' : '🌙';
+      themeToggleBtn.querySelector('#theme-label').textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+    }
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem('theme', theme); } catch (e) {}
+      applyThemeUI(theme);
+    }
+    themeToggleBtn.addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    setTheme(localStorage.getItem('theme') || 'light');
+
+    const panelForm = document.getElementById('panel-form');
+    const createPanelBtn = document.getElementById('create-panel-btn');
+    const adminCheckboxGroup = document.getElementById('admin-checkbox-group');
+    const userRole = sessionStorage.getItem('creatorRole');
+
+    if (userRole === 'reseller') {
+        document.getElementById('admin-link').style.display = 'none';
+    }
+
+    const allowedAdminRoles = ['tangan_kanan', 'owner', 'partner', 'admin_website'];
+    if (allowedAdminRoles.includes(userRole)) {
+        adminCheckboxGroup.style.display = 'flex';
+    }
+    
+    function generatePassword(username) {
+        const rand = Math.floor(100 + Math.random() * 900);
+        return `${username}${rand}`;
+    }
+
+    panelForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const nama = document.getElementById("nama").value.trim().toLowerCase().split(' ').join('');
+      const ram = document.getElementById("ram").value;
+      const telegramId = document.getElementById("telegram-id").value;
+      const makeAdmin = document.getElementById("make-admin").checked;
+      const sandi = generatePassword(nama);
+
+      if (!nama || !ram || !telegramId) {
+        showToast("Nama, RAM, dan ID Telegram wajib diisi!", 'error');
+        return;
+      }
+      
+      createPanelBtn.disabled = true;
+      createPanelBtn.textContent = 'Membuat...';
+
+      try {
+        const response = await fetch('/cpanel',{
+          method: 'POST',
+          headers:{ 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nama: nama,
+            ram: ram,
+            sandi: sandi,
+            telegramId: telegramId,
+            isAdmin: makeAdmin,
+            creatorRole: userRole
+          })
+        });
+        const data = await response.json();
+        
+        showToast(data.message, data.status ? 'success' : 'error');
+        if (data.status) panelForm.reset();
+      } catch (err) {
+        showToast('Gagal membuat panel. Terjadi kesalahan jaringan.', 'error');
+      } finally {
+        createPanelBtn.disabled = false;
+        createPanelBtn.textContent = 'Buat Panel';
+      }
+    });
+
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+    menuBtn.addEventListener('click', toggleSidebar);
+    document.getElementById('sidebar-close-btn').addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+
+    document.getElementById('sidebar-logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        sessionStorage.clear();
+        window.location.href = '/';
+    });
+    if (userRole === 'reseller') document.getElementById('admin-link').style.display = 'none';
+  </script>
+</body>
+</html>

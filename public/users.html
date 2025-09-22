@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daftar Pengguna - Asta Panel 🦅</title>
+  <meta name="theme-color" content="#e6f0ff"/>
+  <link rel="icon" href="https://files.catbox.moe/bzkzuc.jpg" />
+  <link rel="stylesheet" href="styles/users.css">
+  <script>
+    // Skrip inisialisasi tema harus ada di head untuk menghindari FOUC (Flash of Unstyled Content)
+    (function(){
+      try {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    main {
+        align-items: flex-start;
+        padding-top: 50px;
+    }
+    .card {
+        max-width: 800px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid var(--border);
+        padding: 12px;
+        text-align: left;
+        text-transform: capitalize;
+    }
+    th {
+        background-color: rgba(0,0,0,0.05);
+    }
+    [data-theme="dark"] th {
+        background-color: rgba(255,255,255,0.05);
+    }
+    .action-btn {
+        padding: 6px 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        margin-right: 5px;
+        font-weight: 600;
+    }
+    .edit-btn { background-color: #3b82f6; }
+    .delete-btn { background-color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <nav id="sidebar" class="sidebar">
+    <button id="sidebar-close-btn" class="close-btn">&times;</button>
+    <a href="/admin"><span class="icon">🏠</span> Halaman Admin</a>
+    <a href="/panel"><span class="icon">📊</span> Buat Panel</a>
+    <a href="#" id="sidebar-logout-btn"><span class="icon">🚪</span> Keluar</a>
+  </nav>
+
+  <div id="notification-container"></div>
+  <div class="overlay"></div>
+  <header>
+    <button id="menu-btn" class="header-btn" style="left: 20px;">&#9776;</button>
+    <img class="logo" src="https://files.catbox.moe/bzkzuc.jpg" alt="Logo"/>
+    <div style="font-size: 22px; font-weight: 700;">Daftar Pengguna</div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" title="Ganti tema">
+      <span id="theme-icon" aria-hidden="true">🌙</span>
+    </button>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Manajemen Pengguna</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Role</th>
+            <th>Waktu Dibuat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="user-list-table">
+          </tbody>
+      </table>
+    </div>
+  </main>
+  <script src="js/users.js"></script>
+  <footer>© <span id="y"></span> Asta Panel 🦅 · Dibuat dengan ❤</footer>
+</html>

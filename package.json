@@ -1,0 +1,20 @@
+{
+  "name": "ASTA CPANEL 🦅 WEB",
+  "version": "1.0.0",
+  "description": "This is a blank app. See our [app configuration docs](https://docs.replit.com/replit-app/configuration#replit-app-configuration) for more information on how to configure it. Or visit the Dependencies pane to add languages, language packages, and system packages.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "LORD DZIK",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "bcrypt": "^5.1.1",
+    "telegram": "^2.19.8",
+    "input": "^1.0.1"
+  }
+}
