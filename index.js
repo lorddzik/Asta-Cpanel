@@ -4,6 +4,7 @@ require('./setting');
 const express = require('express');
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
+const os = require('os');
 const fs = require('fs');
 
 const app = express();
@@ -205,7 +206,22 @@ async function sendUserbotMessage(target, message, photoUrl = null) {
 }
 
 // Jalankan server
-app.listen(port, () => console.log(`Asta CPanel berjalan di port ${port}`));
+app.listen(port, '0.0.0.0', () => {
+    const getIpAddress = () => {
+        const interfaces = os.networkInterfaces();
+        for (const name of Object.keys(interfaces)) {
+            for (const iface of interfaces[name]) {
+                // Skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    return iface.address;
+                }
+            }
+        }
+        return '127.0.0.1'; // Fallback
+    };
+    const ip = getIpAddress();
+    console.log(`Asta CPanel berjalan di http://${ip}:${port}`);
+});
 
 //
 app.get('/api/users', (req, res) => {
