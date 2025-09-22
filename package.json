@@ -13,7 +13,6 @@
     "axios": "^1.10.0",
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
-    "bcrypt": "^5.1.1",
     "telegram": "^2.19.8",
     "input": "^1.0.1"
   }
