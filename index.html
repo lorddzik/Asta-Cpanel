@@ -6,7 +6,7 @@
   <title>Asta Panel 🦅</title>
   <meta name="theme-color" content="#0ea5e9"/>
   <link rel="icon" href="https://files.catbox.moe/bzkzuc.jpg" />
-  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="style.css">
   <script>
     (function(){
       try {
@@ -150,16 +150,16 @@
           if (data.isAdmin) {
             sessionStorage.setItem('adminAuth', 'true');
             sessionStorage.setItem('creatorRole', 'admin_website');
-            window.location.href = '/admin';
+            window.location.href = '/public/admin';
           } else if (data.isReseller) {
             // Jika reseller, langsung ke panel
-            window.location.href = '/panel';
+            window.location.href = '/public/panel';
           } else {
             // Simpan peran pengguna biasa agar hierarki berlaku di admin.html
             if (data.role) {
               try { sessionStorage.setItem('creatorRole', data.role); } catch(e) {}
             }
-            window.location.href = '/admin';
+            window.location.href = '/public/admin';
           }
         } else {
           loginError.textContent = data.message || 'Username atau password salah!';
